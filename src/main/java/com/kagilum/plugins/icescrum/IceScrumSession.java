@@ -53,7 +53,7 @@ public class IceScrumSession {
     }
 
     public boolean isConnect() {
-        GetMethod method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/task/");
+        GetMethod method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/version/");
         return executeMethod(method);
     }
 
