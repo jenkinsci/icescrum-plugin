@@ -1,0 +1,16 @@
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <f:section title="iceScrum settings">
+      <f:entry title="${%icescrum.url}" field="url">
+          <f:textbox name="icescrum.url" default="http://www.icescrum.com/p/PKEY" value="${instance.settings.projectUrl}" />
+      </f:entry>
+      <f:entry title="${%icescrum.username}" field="username">
+            <f:textbox name="icescrum.username" default="admin" value="${instance.settings.username}" />
+        </f:entry>
+        <f:entry title="${%icescrum.password}" field="password">
+            <f:password name="icescrum.password" value="${instance.settings.password}" />
+        </f:entry>
+        <f:validateButton
+           title="${%Test credentials}" progress="${%Testing...}"
+           method="loginCheck" with="icescrum.username,icescrum.password,icescrum.url" />
+  </f:section>
+</j:jelly>

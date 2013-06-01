@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>1.480.3</version><!-- which version of Jenkins is this plugin built against? -->
+  </parent>
+
+  <groupId>org.jenkins-ci.plugins</groupId>
+  <artifactId>icescrum</artifactId>
+  <version>1.0</version>
+  <packaging>hpi</packaging>
+  <name>iceScrum plugin</name>
+  <description>iceScrum plugin add link to your project tasks in changesets and can send build status to your project on your iceScrum Pro server</description>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/iceScrum+Plugin</url>
+
+  <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>http://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>http://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+    <developers>
+        <developer>
+            <id>vbarrier</id>
+            <name>Vincent Barrier</name>
+            <email>vbarrier@kagilum.com</email>
+        </developer>
+    </developers>
+</project>

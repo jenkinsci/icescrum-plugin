@@ -1,0 +1,107 @@
+package com.kagilum.plugins.icescrum;
+
+import hudson.Extension;
+import hudson.Launcher;
+import hudson.model.*;
+import hudson.scm.ChangeLogSet;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
+import hudson.tasks.Publisher;
+import net.sf.json.JSONObject;
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class IceScrumBuildNotifier extends Notifier {
+
+
+    @DataBoundConstructor
+    public IceScrumBuildNotifier() {
+    }
+
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
+
+    @Override
+    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+
+        final IceScrumProjectProperty p = build.getProject().getProperty(IceScrumProjectProperty.class);
+        if (null == p || null == p.getSettings() || !p.getSettings().hasAuth()) {
+            return true;
+        }
+
+        IceScrumSession session = new IceScrumSession(p.getSettings());
+        JSONObject jsonRoot = createIceScrumBuildObject(build, listener, IceScrumSession.TASK_PATTERN);
+
+        if (session.sendBuildStatut(jsonRoot)) {
+            listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_success()+p.getSettings().getProjectUrl()+")");
+        } else {
+            listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_error()+p.getSettings().getProjectUrl()+Messages.IceScrumBuildNotifier_icescrum_build_error_check());
+        }
+        return true;
+    }
+
+    public JSONObject createIceScrumBuildObject(AbstractBuild<?, ?> build, BuildListener listener, String pattern){
+
+        String jobUrl = Hudson.getInstance().getRootUrl()+"job/"+build.getProject().getName()+"/";
+
+        JSONObject jsonRoot = new JSONObject();
+        JSONObject jsonData = new JSONObject();
+        JSONObject jsonBuild = new JSONObject();
+
+        jsonBuild.put("jobName",build.getProject().getDisplayName());
+        jsonBuild.put("builtOn", "Jenkins: "+build.getHudsonVersion());
+        jsonBuild.put("name",build.getDisplayName());
+        jsonBuild.put("number",build.getNumber());
+        jsonBuild.put("timestamp", build.getTimeInMillis());
+        jsonBuild.put("url", jobUrl+build.getNumber());
+
+        if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+            jsonBuild.put("status",IceScrumSession.BUILD_SUCCESS);
+        } else if (build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
+            jsonBuild.put("status", IceScrumSession.BUILD_FAILURE);
+        } else {
+            jsonBuild.put("status",IceScrumSession.BUILD_ERROR);
+        }
+
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        if (!build.getChangeSet().isEmptySet()){
+            for (ChangeLogSet.Entry change : build.getChangeSet()) {
+                Matcher m = Pattern.compile(pattern).matcher(change.getMsg());
+                while (m.find()) {
+                    if (m.groupCount() >= 1) {
+                        ids.add(Integer.parseInt(m.group(1)));
+                    }
+                }
+
+            }
+            jsonBuild.put("tasks", ids);
+        }
+
+        if (ids.size() == 0){
+            listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_empty());
+        }
+
+        jsonData.put("build",jsonBuild);
+        jsonRoot.put("data", jsonData);
+
+        return jsonRoot;
+    }
+
+    @Extension
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
+        public boolean isApplicable(Class<? extends AbstractProject> aClass) {
+            return true;
+        }
+
+        public String getDisplayName() {
+            return Messages.IceScrumBuildNotifier_icescrum_notifier_displayName();
+        }
+    }
+}
