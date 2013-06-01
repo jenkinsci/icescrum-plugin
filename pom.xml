@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>icescrum</artifactId>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>iceScrum plugin</name>
   <description>iceScrum plugin add link to your project tasks in changesets and can send build status to your project on your iceScrum Pro server</description>
@@ -35,4 +35,10 @@
             <email>vbarrier@kagilum.com</email>
         </developer>
     </developers>
+
+    <scm>
+        <connection>scm:git:ssh://github.com/jenkinsci/icescrum-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/icescrum-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/icescrum-plugin</url>
+    </scm>
 </project>
