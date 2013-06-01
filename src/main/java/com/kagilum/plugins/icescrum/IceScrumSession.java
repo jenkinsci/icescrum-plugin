@@ -19,6 +19,7 @@
  */
 package com.kagilum.plugins.icescrum;
 
+import hudson.util.IOUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -27,6 +28,7 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.kohsuke.stapler.HttpResponse;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -41,11 +43,13 @@ public class IceScrumSession {
     public static final int BUILD_SUCCESS = 1;
     public static final int BUILD_FAILURE = 5;
     public static final int BUILD_ERROR = 10;
+    public static final float REQUIRED_VERSION = 6.6f;
     public static final String TASK_PATTERN = "T(\\d+)-?(\\d+\\.\\d+|\\d+\\,\\d+|\\d+)?";
 
     private IceScrumProjectSettings settings;
     private HttpClient client;
     private String httpError = null;
+    private String body;
 
     public IceScrumSession(IceScrumProjectSettings settings) {
         this.settings = settings;
@@ -53,8 +57,29 @@ public class IceScrumSession {
     }
 
     public boolean isConnect() {
-        GetMethod method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/version/");
-        return executeMethod(method);
+        GetMethod method = new GetMethod(settings.getUrl() + "/version/");
+        if(executeMethod(method)){
+            try{
+                String version = body;
+                if (version.isEmpty()){
+                    throw new IOException(Messages.IceScrumSession_icescrum_http_notfound());
+                }
+                //Only Pro version contains build business object
+                if (!version.contains("Pro")){
+                    throw new IOException(Messages.IceScrumSession_only_pro_version());
+                }
+                //Got R6#5.1 Pro (Cloud) -> 6.51 in order to compare float
+                version = version.replaceAll(" Pro", "").replaceAll(" Cloud", "").replaceAll("R","").replaceAll("\\.","").replaceAll("#",".");
+                if (Float.parseFloat(version) < REQUIRED_VERSION){
+                    throw new IOException(Messages.IceScrumSession_not_compatible_version());
+                }
+                method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/task");
+                return executeMethod(method);
+            } catch (IOException e) {
+                httpError = e.getMessage();
+            }
+        }
+        return false;
     }
 
     public boolean sendBuildStatut(JSONObject build) throws UnsupportedEncodingException {
@@ -77,6 +102,7 @@ public class IceScrumSession {
             if (code != HttpStatus.SC_OK) {
                 checkServerStatus(code);
             }else {
+                body = IOUtils.toString(method.getResponseBodyAsStream());
                 result = true;
             }
         } catch (IOException e) {
@@ -92,12 +118,13 @@ public class IceScrumSession {
         boolean result = false;
         try {
             setAuthentication();
-            method.setRequestHeader("Content-type","text/json");
+            method.setRequestHeader("accept", "application/json");
             client.executeMethod(method);
             int code = method.getStatusCode();
             if (code != HttpStatus.SC_OK) {
                 checkServerStatus(code);
             }else {
+                body = IOUtils.toString(method.getResponseBodyAsStream());
                 result = true;
             }
         } catch (IOException e) {
@@ -111,7 +138,7 @@ public class IceScrumSession {
 
     private void setAuthentication() throws MalformedURLException {
         int port;
-        URL url = new URL(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/task/");
+        URL url = new URL(settings.getUrl() + "/version/");
         if (url.getPort() == -1) {
             port = url.getDefaultPort();
         } else {
