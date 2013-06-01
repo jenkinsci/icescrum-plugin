@@ -36,9 +36,14 @@
         </developer>
     </developers>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/icescrum-plugin.git</connection>
-        <developerConnection>scm:git:git://git@github.com/jenkinsci/icescrum-plugin.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/icescrum-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/icescrum-plugin</url>
+        <tag>HEAD</tag>
     </scm>
 </project>
