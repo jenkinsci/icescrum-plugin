@@ -86,7 +86,7 @@ public class IceScrumSession {
         PostMethod method = new PostMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/build");
         StringRequestEntity requestEntity = new StringRequestEntity(build.toString(),"application/json","UTF-8");
         method.setRequestEntity(requestEntity);
-        return executeMethod(method);
+        return executeMethod(method, HttpStatus.SC_CREATED);
     }
 
     private void initClient() {
@@ -94,12 +94,16 @@ public class IceScrumSession {
     }
 
     private boolean executeMethod(PostMethod method){
+        return executeMethod(method,0);
+    }
+
+    private boolean executeMethod(PostMethod method, int expectedCode){
         boolean result = false;
         try {
             setAuthentication();
             client.executeMethod(method);
             int code = method.getStatusCode();
-            if (code != HttpStatus.SC_OK) {
+            if (code != HttpStatus.SC_OK && (expectedCode != 0 && expectedCode != code)) {
                 checkServerStatus(code);
             }else {
                 body = IOUtils.toString(method.getResponseBodyAsStream());
@@ -115,13 +119,17 @@ public class IceScrumSession {
     }
 
     private boolean executeMethod(GetMethod method){
+        return executeMethod(method,0);
+    }
+
+    private boolean executeMethod(GetMethod method, int expectedCode){
         boolean result = false;
         try {
             setAuthentication();
             method.setRequestHeader("accept", "application/json");
             client.executeMethod(method);
             int code = method.getStatusCode();
-            if (code != HttpStatus.SC_OK) {
+            if (code != HttpStatus.SC_OK && (expectedCode != 0 && expectedCode != code)) {
                 checkServerStatus(code);
             }else {
                 body = IOUtils.toString(method.getResponseBodyAsStream());

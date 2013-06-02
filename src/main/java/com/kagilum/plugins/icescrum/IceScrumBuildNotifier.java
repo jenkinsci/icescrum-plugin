@@ -70,7 +70,6 @@ public class IceScrumBuildNotifier extends Notifier {
 
         String jobUrl = Hudson.getInstance().getRootUrl()+"job/"+build.getProject().getName()+"/";
 
-        JSONObject jsonRoot = new JSONObject();
         JSONObject jsonData = new JSONObject();
         JSONObject jsonBuild = new JSONObject();
 
@@ -78,7 +77,7 @@ public class IceScrumBuildNotifier extends Notifier {
         jsonBuild.put("builtOn", "Jenkins: "+build.getHudsonVersion());
         jsonBuild.put("name",build.getDisplayName());
         jsonBuild.put("number",build.getNumber());
-        jsonBuild.put("timestamp", build.getTimeInMillis());
+        jsonBuild.put("date", build.getTimeInMillis());
         jsonBuild.put("url", jobUrl+build.getNumber());
 
         if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
@@ -108,9 +107,7 @@ public class IceScrumBuildNotifier extends Notifier {
         }
 
         jsonData.put("build",jsonBuild);
-        jsonRoot.put("data", jsonData);
-
-        return jsonRoot;
+        return jsonData;
     }
 
     @Extension
