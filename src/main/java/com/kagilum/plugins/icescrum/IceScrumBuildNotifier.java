@@ -73,19 +73,19 @@ public class IceScrumBuildNotifier extends Notifier {
         JSONObject jsonData = new JSONObject();
         JSONObject jsonBuild = new JSONObject();
 
-        jsonBuild.put("jobName",build.getProject().getDisplayName());
-        jsonBuild.put("builtOn", "Jenkins: "+build.getHudsonVersion());
-        jsonBuild.put("name",build.getDisplayName());
-        jsonBuild.put("number",build.getNumber());
-        jsonBuild.put("date", build.getTimeInMillis());
-        jsonBuild.put("url", jobUrl+build.getNumber());
+        jsonBuild.element("jobName",build.getProject().getDisplayName());
+        jsonBuild.element("builtOn", "Jenkins: "+build.getHudsonVersion());
+        jsonBuild.element("name",build.getDisplayName());
+        jsonBuild.element("number",build.getNumber());
+        jsonBuild.element("date", build.getTimeInMillis());
+        jsonBuild.element("url", jobUrl+build.getNumber());
 
         if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
-            jsonBuild.put("status",IceScrumSession.BUILD_SUCCESS);
+            jsonBuild.element("status",IceScrumSession.BUILD_SUCCESS);
         } else if (build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
-            jsonBuild.put("status", IceScrumSession.BUILD_FAILURE);
+            jsonBuild.element("status", IceScrumSession.BUILD_FAILURE);
         } else {
-            jsonBuild.put("status",IceScrumSession.BUILD_ERROR);
+            jsonBuild.element("status",IceScrumSession.BUILD_ERROR);
         }
 
         ArrayList<Integer> ids = new ArrayList<Integer>();
@@ -99,14 +99,14 @@ public class IceScrumBuildNotifier extends Notifier {
                 }
 
             }
-            jsonBuild.put("tasks", ids);
+            jsonBuild.element("tasks", ids);
         }
 
         if (ids.size() == 0){
             listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_empty());
         }
 
-        jsonData.put("build",jsonBuild);
+        jsonData.element("build",jsonBuild);
         return jsonData;
     }
 

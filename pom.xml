@@ -46,4 +46,17 @@
         <url>https://github.com/jenkinsci/icescrum-plugin</url>
         <tag>HEAD</tag>
     </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
+        </dependency>
+    </dependencies>
 </project>
