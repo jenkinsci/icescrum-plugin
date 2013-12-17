@@ -43,7 +43,7 @@ public class IceScrumSession {
     public static final int BUILD_SUCCESS = 1;
     public static final int BUILD_FAILURE = 5;
     public static final int BUILD_ERROR = 10;
-    public static final float REQUIRED_VERSION = 6.6f;
+    public static final float REQUIRED_VERSION = 6.06f;
     public static final String TASK_PATTERN = "T(\\d+)-?(\\d+\\.\\d+|\\d+\\,\\d+|\\d+)?";
 
     private IceScrumProjectSettings settings;
@@ -70,6 +70,9 @@ public class IceScrumSession {
                 }
                 //Got R6#5.1 Pro (Cloud) -> 6.51 in order to compare float
                 version = version.replaceAll(" Pro", "").replaceAll(" Cloud", "").replaceAll("R","").replaceAll("\\.","").replaceAll("#",".");
+                if (version.length() == 3){
+                    version = version.replaceAll("\\.",".0");
+                }
                 if (Float.parseFloat(version) < REQUIRED_VERSION){
                     throw new IOException(Messages.IceScrumSession_not_compatible_version());
                 }
