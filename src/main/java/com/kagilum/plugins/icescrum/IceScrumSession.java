@@ -64,20 +64,25 @@ public class IceScrumSession {
                 if (version.isEmpty()){
                     throw new IOException(Messages.IceScrumSession_icescrum_http_notfound());
                 }
-                //Only Pro version contains build business object
-                if (!version.contains("Pro")){
-                    throw new IOException(Messages.IceScrumSession_only_pro_version());
+                if (version.startsWith("7.")) {
+                    method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/build");
+                    return executeMethod(method, 200);
+                } else {
+                    //Only Pro version contains build business object
+                    if (!version.contains("Pro")){
+                        throw new IOException(Messages.IceScrumSession_only_pro_version());
+                    }
+                    //Got R6#5.1 Pro (Cloud) -> 6.51 in order to compare float
+                    version = version.replaceAll(" Pro", "").replaceAll(" Cloud", "").replaceAll("R","").replaceAll("\\.","").replaceAll("#",".");
+                    if (version.length() == 3){
+                        version = version.replaceAll("\\.",".0");
+                    }
+                    if (Float.parseFloat(version) < REQUIRED_VERSION){
+                        throw new IOException(Messages.IceScrumSession_not_compatible_version());
+                    }
+                    method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/task");
+                    return executeMethod(method);
                 }
-                //Got R6#5.1 Pro (Cloud) -> 6.51 in order to compare float
-                version = version.replaceAll(" Pro", "").replaceAll(" Cloud", "").replaceAll("R","").replaceAll("\\.","").replaceAll("#",".");
-                if (version.length() == 3){
-                    version = version.replaceAll("\\.",".0");
-                }
-                if (Float.parseFloat(version) < REQUIRED_VERSION){
-                    throw new IOException(Messages.IceScrumSession_not_compatible_version());
-                }
-                method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/task");
-                return executeMethod(method);
             } catch (IOException e) {
                 httpError = e.getMessage();
             }
