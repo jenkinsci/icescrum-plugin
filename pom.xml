@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>icescrum</artifactId>
-  <version>1.0.5.1</version>
+  <version>1.0.5.2-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>iceScrum plugin</name>
   <description>iceScrum plugin add link to your project tasks in changesets and can send build status to your project on your iceScrum Pro server</description>
