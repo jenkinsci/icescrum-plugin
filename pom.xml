@@ -40,6 +40,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jenkins.version>1.609.3</jenkins.version>  <!-- which version of Jenkins is this plugin built against? -->
+        <hpi-plugin.version>1.106</hpi-plugin.version>
     </properties>
 
     <scm>
