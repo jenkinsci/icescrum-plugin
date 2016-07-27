@@ -68,7 +68,7 @@ public class IceScrumBuildNotifier extends Notifier {
 
     public JSONObject createIceScrumBuildObject(AbstractBuild<?, ?> build, BuildListener listener, String pattern){
 
-        String jobUrl = Hudson.getInstance().getRootUrl()+"job/"+build.getProject().getName()+"/";
+        String jobUrl = Hudson.getInstance().getRootUrl() != null ? Hudson.getInstance().getRootUrl()+"job/"+build.getProject().getName()+"/" : "";
 
         JSONObject jsonData = new JSONObject();
         JSONObject jsonBuild = new JSONObject();
@@ -80,9 +80,9 @@ public class IceScrumBuildNotifier extends Notifier {
         jsonBuild.element("date", build.getTimeInMillis());
         jsonBuild.element("url", jobUrl+build.getNumber());
 
-        if (build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
+        if (build.getResult() != null && build.getResult().isBetterOrEqualTo(Result.SUCCESS)) {
             jsonBuild.element("status",IceScrumSession.BUILD_SUCCESS);
-        } else if (build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
+        } else if (build.getResult() != null && build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
             jsonBuild.element("status", IceScrumSession.BUILD_FAILURE);
         } else {
             jsonBuild.element("status",IceScrumSession.BUILD_ERROR);

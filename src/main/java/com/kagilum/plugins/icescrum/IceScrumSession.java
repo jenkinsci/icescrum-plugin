@@ -101,10 +101,6 @@ public class IceScrumSession {
         client = new HttpClient();
     }
 
-    private boolean executeMethod(PostMethod method){
-        return executeMethod(method,0);
-    }
-
     private boolean executeMethod(PostMethod method, int expectedCode){
         boolean result = false;
         try {
