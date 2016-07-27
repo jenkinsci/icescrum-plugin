@@ -3,8 +3,9 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.480.3</version><!-- which version of Jenkins is this plugin built against? -->
+    <version>2.2</version>
   </parent>
+
 
   <artifactId>icescrum</artifactId>
   <version>1.0.5.2-SNAPSHOT</version>
@@ -38,6 +39,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jenkins.version>1.609.3</jenkins.version>  <!-- which version of Jenkins is this plugin built against? -->
     </properties>
 
     <scm>

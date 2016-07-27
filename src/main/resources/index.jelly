@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
   This plugin integrates <a href="http://www.icescrum.com/">iceScrum Pro &amp; Pro Cloud</a> to Jenkins.
 </div>
