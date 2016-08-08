@@ -1,55 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jenkins-ci.plugins</groupId>
-    <artifactId>plugin</artifactId>
-    <version>2.2</version>
-  </parent>
-
-
-  <artifactId>icescrum</artifactId>
-  <version>1.0.5.5-SNAPSHOT</version>
-  <packaging>hpi</packaging>
-  <name>iceScrum plugin</name>
-  <description>iceScrum plugin add link to your project tasks in changesets and can send build status to your project on your iceScrum Pro server</description>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/iceScrum+Plugin</url>
-
-  <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
-  <repositories>
-    <repository>
-      <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-    <developers>
-        <developer>
-            <id>vbarrier</id>
-            <name>Vincent Barrier</name>
-            <email>vbarrier@kagilum.com</email>
-        </developer>
-    </developers>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jenkins.version>1.609.3</jenkins.version>  <!-- which version of Jenkins is this plugin built against? -->
-        <hpi-plugin.version>1.106</hpi-plugin.version>
-    </properties>
-
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>plugin</artifactId>
+        <version>2.10</version>
+    </parent>
+    <artifactId>icescrum</artifactId>
+    <version>1.0.5.5-SNAPSHOT</version>
+    <name>iceScrum plugin</name>
+    <description>iceScrum plugin add link to your project tasks in changesets and can send build status to your project on your iceScrum Pro server</description>
+    <packaging>hpi</packaging>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+    <url>http://wiki.jenkins-ci.org/display/JENKINS/iceScrum+Plugin</url>
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/icescrum-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/icescrum-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/icescrum-plugin</url>
+        <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
         <tag>HEAD</tag>
     </scm>
-
+    <properties>
+        <jenkins.version>1.642.3</jenkins.version>  <!-- which version of Jenkins is this plugin built against? -->
+    </properties>
+    <repositories>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -62,4 +50,11 @@
             <version>1.4</version>
         </dependency>
     </dependencies>
+    <developers>
+        <developer>
+            <id>vbarrier</id>
+            <name>Vincent Barrier</name>
+            <email>vbarrier@kagilum.com</email>
+        </developer>
+    </developers>
 </project>
