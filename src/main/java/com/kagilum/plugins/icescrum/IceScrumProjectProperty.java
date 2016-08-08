@@ -103,11 +103,14 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
 
         @Override
         public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            IceScrumProjectProperty ipp = req.bindJSON(IceScrumProjectProperty.class, formData);
-            if (ipp.getSettings() == null) {
-                ipp = null; // not configured
+            if(req != null){
+                IceScrumProjectProperty ipp = req.bindJSON(IceScrumProjectProperty.class, formData);
+                if (ipp.getSettings() == null) {
+                    ipp = null; // not configured
+                }
+                return ipp;
             }
-            return ipp;
+            return null;
         }
 
     }
