@@ -40,9 +40,9 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
 
     @DataBoundConstructor
     public IceScrumProjectProperty(String url, String username, String password, String accessToken, String authType) {
-        if (username != null && password != null && authType.equals(IceScrumProjectSettings.AUTH_TYPE_BASIC))
+        if (username != null && password != null && authType != null && authType.equals(IceScrumProjectSettings.AUTH_TYPE_BASIC))
             this.settings = new IceScrumProjectSettings(url, username, password);
-        else if (accessToken != null && authType.equals(IceScrumProjectSettings.AUTH_TYPE_TOKEN))
+        else if (accessToken != null && authType != null &&  authType.equals(IceScrumProjectSettings.AUTH_TYPE_TOKEN))
             this.settings = new IceScrumProjectSettings(url, accessToken);
         else {
             this.settings = new IceScrumProjectSettings(url);
