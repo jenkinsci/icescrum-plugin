@@ -75,13 +75,15 @@ public class IceScrumBuildNotifier extends Notifier {
         JSONObject jsonBuild = new JSONObject();
 
         jsonBuild.element("jobName",build.getProject().getDisplayName());
-        if(includeBuiltOn){
-            jsonBuild.element("builtOn", "Jenkins: "+build.getHudsonVersion());
-        }
         jsonBuild.element("name",build.getDisplayName());
         jsonBuild.element("number",build.getNumber());
         jsonBuild.element("date", build.getTimeInMillis());
         jsonBuild.element("url", jobUrl+build.getNumber());
+
+        //only for old icescrum server
+        if(includeBuiltOn){
+            jsonBuild.element("builtOn", "Jenkins: "+build.getHudsonVersion());
+        }
 
         Result result = build.getResult();
         if(result != null){
