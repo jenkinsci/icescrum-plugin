@@ -56,7 +56,7 @@ public class IceScrumBuildNotifier extends Notifier {
         }
 
         IceScrumSession session = new IceScrumSession(p.getSettings());
-        JSONObject jsonRoot = createIceScrumBuildObject(build, listener, IceScrumSession.TASK_PATTERN);
+        JSONObject jsonRoot = createIceScrumBuildObject(build, listener, IceScrumSession.TASK_PATTERN, !p.getSettings().isTokenAuth());
 
         if (session.sendBuildStatut(jsonRoot)) {
             listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_success()+p.getSettings().getProjectUrl()+")");
@@ -66,7 +66,7 @@ public class IceScrumBuildNotifier extends Notifier {
         return true;
     }
 
-    public JSONObject createIceScrumBuildObject(AbstractBuild<?, ?> build, BuildListener listener, String pattern){
+    public JSONObject createIceScrumBuildObject(AbstractBuild<?, ?> build, BuildListener listener, String pattern, boolean includeBuiltOn){
         Hudson instance =  Hudson.getInstance();
         String url = instance != null ? instance.getRootUrl() : "";
         String jobUrl = url != null ? url+"job/"+build.getProject().getName()+"/" : "";
@@ -75,7 +75,9 @@ public class IceScrumBuildNotifier extends Notifier {
         JSONObject jsonBuild = new JSONObject();
 
         jsonBuild.element("jobName",build.getProject().getDisplayName());
-        jsonBuild.element("builtOn", "Jenkins: "+build.getHudsonVersion());
+        if(includeBuiltOn){
+            jsonBuild.element("builtOn", "Jenkins: "+build.getHudsonVersion());
+        }
         jsonBuild.element("name",build.getDisplayName());
         jsonBuild.element("number",build.getNumber());
         jsonBuild.element("date", build.getTimeInMillis());
