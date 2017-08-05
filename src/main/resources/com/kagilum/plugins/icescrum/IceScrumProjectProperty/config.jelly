@@ -1,17 +1,27 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <f:section title="iceScrum settings">
-      <f:entry title="${%icescrum.url}" field="url">
-          <f:textbox name="icescrum.url" default="http://www.icescrum.com/p/PKEY" value="${instance.settings.projectUrl}" />
-      </f:entry>
-      <f:entry title="${%icescrum.username}" field="username">
-            <f:textbox name="icescrum.username" default="admin" value="${instance.settings.username}" />
-        </f:entry>
-        <f:entry title="${%icescrum.password}" field="password">
-            <f:password name="icescrum.password" value="${instance.settings.password}" />
-        </f:entry>
-        <f:validateButton
-           title="${%Test credentials}" progress="${%Testing...}"
-           method="loginCheck" with="icescrum.username,icescrum.password,icescrum.url" />
-  </f:section>
+<f:section title="iceScrum settings">
+    <f:entry title="${%icescrum.url}" field="url">
+        <f:textbox name="icescrum.url" default="https://cloud.icescrum.com/p/PKEY" value="${instance.settings.projectUrl}" />
+    </f:entry>
+    <f:radioBlock name="icescrum.authType" value="token" title="iceScrum server authentication (v7+)" checked="${instance.settings.authType == 'token'}" inline="true">
+            <f:entry title="${%icescrum.accessToken}" field="accessToken">
+                <f:textbox name="icescrum.accessToken" default="" value="${instance.settings.accessToken}" />
+            </f:entry>
+            <f:validateButton
+                title="${%Test credentials}" progress="${%Testing...}"
+                method="loginCheck" with="icescrum.accessToken,icescrum.url" />
+    </f:radioBlock>
+    <f:radioBlock name="icescrum.authType" value="basic" title="old iceScrum server authentication (R6)" checked="${instance.settings.authType == 'basic'}" inline="true">
+            <f:entry title="${%icescrum.username}" field="username">
+                <f:textbox name="icescrum.username" default="admin" value="${instance.settings.username}" />
+            </f:entry>
+            <f:entry title="${%icescrum.password}" field="password">
+                <f:password name="icescrum.password" value="${instance.settings.password}" />
+            </f:entry>
+            <f:validateButton
+                title="${%Test credentials}" progress="${%Testing...}"
+                method="o ldLoginCheck" with="icescrum.username,icescrum.password,icescrum.url" />
+    </f:radioBlock>
+</f:section>
 </j:jelly>

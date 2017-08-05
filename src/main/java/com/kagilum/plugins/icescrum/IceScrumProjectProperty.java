@@ -39,9 +39,11 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
     private IceScrumProjectSettings settings;
 
     @DataBoundConstructor
-    public IceScrumProjectProperty(String url, String username, String password) {
-        if (username != null && password != null)
+    public IceScrumProjectProperty(String url, String username, String password, String accessToken, String authType) {
+        if (username != null && password != null && authType.equals(IceScrumProjectSettings.AUTH_TYPE_BASIC))
             this.settings = new IceScrumProjectSettings(url, username, password);
+        else if (accessToken != null && authType.equals(IceScrumProjectSettings.AUTH_TYPE_TOKEN))
+            this.settings = new IceScrumProjectSettings(url, accessToken);
         else {
             this.settings = new IceScrumProjectSettings(url);
         }
@@ -82,9 +84,27 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
                 return FormValidation.error(Messages.IceScrumProjectProperty_icescrum_error_url());
         }
 
-        public FormValidation doLoginCheck(@QueryParameter("icescrum.username") final String username,
-                                           @QueryParameter("icescrum.password") final String password,
+        public FormValidation doLoginCheck(@QueryParameter("icescrum.accessToken") final String accessToken,
                                            @QueryParameter("icescrum.url") final String url) throws IOException, ServletException {
+
+            if(!IceScrumProjectSettings.isValidUrl(url))
+                return FormValidation.error(Messages.IceScrumProjectProperty_icescrum_error_url());
+
+            if (isEmpty(accessToken) || isEmpty(url)){
+                return FormValidation.error(Messages.IceScrumProjectProperty_icescrum_parameters_missing());
+            } else {
+                IceScrumProjectSettings settings = new IceScrumProjectSettings(url, accessToken);
+                IceScrumSession session = new IceScrumSession(settings);
+                if(!session.isConnect()){
+                    return FormValidation.ok(session.getLastError());
+                }
+            }
+            return FormValidation.ok(Messages.IceScrumProjectProperty_icescrum_connection_successful());
+        }
+
+        public FormValidation doOldLoginCheck(@QueryParameter("icescrum.username") final String username,
+                                              @QueryParameter("icescrum.password") final String password,
+                                              @QueryParameter("icescrum.url") final String url) throws IOException, ServletException {
 
             if(!IceScrumProjectSettings.isValidUrl(url))
                 return FormValidation.error(Messages.IceScrumProjectProperty_icescrum_error_url());
@@ -100,6 +120,7 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
             }
             return FormValidation.ok(Messages.IceScrumProjectProperty_icescrum_connection_successful());
         }
+
 
         @Override
         public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {

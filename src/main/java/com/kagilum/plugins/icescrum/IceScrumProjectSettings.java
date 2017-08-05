@@ -24,10 +24,15 @@ import java.util.regex.Pattern;
 
 public class IceScrumProjectSettings {
 
+    public static final String AUTH_TYPE_TOKEN = "token";
+    public static final String AUTH_TYPE_BASIC = "basic";
+
     private String url;
     private String pkey;
+    private String authType = AUTH_TYPE_TOKEN;
     private String username = null;
     private String password = null;
+    private String accessToken = null;
     private static final String PATTERN_ICESCRUM_URL = "(http|https)://(.*)/p/([0-9A-Z]*)";
 
     public IceScrumProjectSettings(String url){
@@ -39,10 +44,21 @@ public class IceScrumProjectSettings {
         }
     }
 
+    public IceScrumProjectSettings(String url, String accessToken){
+        this(url);
+        this.authType = "token";
+        this.accessToken = accessToken;
+    }
+
     public IceScrumProjectSettings(String url, String username, String password){
         this(url);
+        this.authType = "basic";
         this.username = username;
         this.password = password;
+    }
+
+    public String getAuthType() {
+        return authType;
     }
 
     public String getUsername() {
@@ -57,6 +73,10 @@ public class IceScrumProjectSettings {
         return url;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -66,7 +86,19 @@ public class IceScrumProjectSettings {
     }
 
     public boolean hasAuth(){
-        return this.password != null && this.username != null;
+        if(authType.equals(AUTH_TYPE_BASIC)){
+            return this.password != null && this.username != null;
+        } else {
+            return this.accessToken != null;
+        }
+    }
+
+    public String getPath(){
+        return isTokenAuth() ? "/ws/project/" : "/ws/p/";
+    }
+
+    public boolean isTokenAuth(){
+        return authType.equals(AUTH_TYPE_TOKEN);
     }
 
     public static boolean isValidUrl(String url){

@@ -22,6 +22,7 @@ package com.kagilum.plugins.icescrum;
 import hudson.util.IOUtils;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -65,7 +66,7 @@ public class IceScrumSession {
                     throw new IOException(Messages.IceScrumSession_icescrum_http_notfound());
                 }
                 if (version.startsWith("7.")) {
-                    method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/build");
+                    method = new GetMethod(settings.getUrl() + settings.getPath() + settings.getPkey() + "/build");
                     return executeMethod(method, 200);
                 } else {
                     //Only Pro version contains build business object
@@ -80,7 +81,7 @@ public class IceScrumSession {
                     if (Float.parseFloat(version) < REQUIRED_VERSION){
                         throw new IOException(Messages.IceScrumSession_not_compatible_version());
                     }
-                    method = new GetMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/task");
+                    method = new GetMethod(settings.getUrl() + settings.getPath() + settings.getPkey() + "/task");
                     return executeMethod(method);
                 }
             } catch (IOException e) {
@@ -91,7 +92,7 @@ public class IceScrumSession {
     }
 
     public boolean sendBuildStatut(JSONObject build) throws UnsupportedEncodingException {
-        PostMethod method = new PostMethod(settings.getUrl() + "/ws/p/" + settings.getPkey() + "/build");
+        PostMethod method = new PostMethod(settings.getUrl() + settings.getPath() + settings.getPkey() + "/build");
         StringRequestEntity requestEntity = new StringRequestEntity(build.toString(),"application/json","UTF-8");
         method.setRequestEntity(requestEntity);
         return executeMethod(method, HttpStatus.SC_CREATED);
@@ -104,7 +105,7 @@ public class IceScrumSession {
     private boolean executeMethod(PostMethod method, int expectedCode){
         boolean result = false;
         try {
-            setAuthentication();
+            setAuthentication(method);
             client.executeMethod(method);
             int code = method.getStatusCode();
             if (code != HttpStatus.SC_OK && (expectedCode != 0 && expectedCode != code)) {
@@ -129,7 +130,7 @@ public class IceScrumSession {
     private boolean executeMethod(GetMethod method, int expectedCode){
         boolean result = false;
         try {
-            setAuthentication();
+            setAuthentication(method);
             method.setRequestHeader("accept", "application/json");
             client.executeMethod(method);
             int code = method.getStatusCode();
@@ -148,7 +149,7 @@ public class IceScrumSession {
         return result;
     }
 
-    private void setAuthentication() throws MalformedURLException {
+    private void setAuthentication(HttpMethodBase method) throws MalformedURLException {
         int port;
         URL url = new URL(settings.getUrl() + "/version/");
         if (url.getPort() == -1) {
@@ -156,7 +157,12 @@ public class IceScrumSession {
         } else {
             port = url.getPort();
         }
-        client.getState().setCredentials(new AuthScope(url.getHost(), port),new UsernamePasswordCredentials(settings.getUsername(), settings.getPassword()));
+        if(settings.isTokenAuth()){
+            method.setRequestHeader("content-type", "application/json");
+            method.setRequestHeader("x-icescrum-token", settings.getAccessToken());
+        } else {
+            client.getState().setCredentials(new AuthScope(url.getHost(), port),new UsernamePasswordCredentials(settings.getUsername(), settings.getPassword()));
+        }
     }
 
     private void checkServerStatus(int code) throws IOException {
