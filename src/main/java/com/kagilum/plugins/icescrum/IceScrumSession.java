@@ -66,8 +66,9 @@ public class IceScrumSession {
                     throw new IOException(Messages.IceScrumSession_icescrum_http_notfound());
                 }
                 if (version.startsWith("7.")) {
-                    method = new GetMethod(settings.getUrl() + settings.getPath() + settings.getPkey() + "/build");
+                    method = new GetMethod(settings.getUrl() + settings.getPath() + settings.getPkey() + "/build/jenkins");
                     return executeMethod(method, 200);
+
                 } else {
                     //Only Pro version contains build business object
                     if (!version.contains("Pro")){
@@ -168,7 +169,7 @@ public class IceScrumSession {
     private void checkServerStatus(int code) throws IOException {
         switch(code){
             case HttpStatus.SC_SERVICE_UNAVAILABLE:
-                throw new IOException(Messages.IceScrumSession_icescrum_http_unavailable());
+                throw new IOException(settings.isTokenAuth() ? Messages.IceScrumSession_icescrum_http_unavailable_new() : Messages.IceScrumSession_icescrum_http_unavailable());
             case HttpStatus.SC_UNAUTHORIZED:
                 throw new IOException(Messages.IceScrumSession_icescrum_http_unauthorized());
             case HttpStatus.SC_FORBIDDEN:
