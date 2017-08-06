@@ -92,7 +92,7 @@ public class IceScrumSession {
     }
 
     public boolean sendBuildStatut(JSONObject build) throws UnsupportedEncodingException {
-        PostMethod method = new PostMethod(settings.getUrl() + settings.getPath() + settings.getPkey() + "/" + (settings.isTokenAuth() ? "jenkins" : "build"));
+        PostMethod method = new PostMethod(settings.getUrl() + settings.getPath() + settings.getPkey() + "/" + (settings.isTokenAuth() ? "build/jenkins" : "build"));
         StringRequestEntity requestEntity = new StringRequestEntity(build.toString(),"application/json","UTF-8");
         method.setRequestEntity(requestEntity);
         return executeMethod(method, HttpStatus.SC_CREATED);
