@@ -68,8 +68,7 @@ public class IceScrumBuildNotifier extends Notifier {
 
     public JSONObject createIceScrumBuildObject(AbstractBuild<?, ?> build, BuildListener listener, String pattern, boolean includeBuiltOn){
         Hudson instance =  Hudson.getInstance();
-        String url = instance != null ? instance.getRootUrl() : "";
-        String jobUrl = url != null ? url+"job/"+build.getProject().getName()+"/" : "";
+        String jobUrl = instance != null ? instance.getRootUrl() + "/" + build.getUrl() : "";
 
         JSONObject jsonData = new JSONObject();
         JSONObject jsonBuild = new JSONObject();
