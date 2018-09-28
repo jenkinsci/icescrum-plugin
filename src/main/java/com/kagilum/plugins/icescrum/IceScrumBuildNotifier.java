@@ -59,46 +59,46 @@ public class IceScrumBuildNotifier extends Notifier {
         JSONObject jsonRoot = createIceScrumBuildObject(build, listener, IceScrumSession.TASK_PATTERN, !p.getSettings().isTokenAuth());
 
         if (session.sendBuildStatut(jsonRoot)) {
-            listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_success()+p.getSettings().getProjectUrl()+")");
+            listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_success() + p.getSettings().getProjectUrl() + ")");
         } else {
-            listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_error()+p.getSettings().getProjectUrl()+Messages.IceScrumBuildNotifier_icescrum_build_error_check());
+            listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_error() + p.getSettings().getProjectUrl() + Messages.IceScrumBuildNotifier_icescrum_build_error_check());
         }
         return true;
     }
 
-    public JSONObject createIceScrumBuildObject(AbstractBuild<?, ?> build, BuildListener listener, String pattern, boolean includeBuiltOn){
-        Hudson instance =  Hudson.getInstance();
-        String jobUrl = instance != null ? instance.getRootUrl() + "/" + build.getUrl() : "";
+    public JSONObject createIceScrumBuildObject(AbstractBuild<?, ?> build, BuildListener listener, String pattern, boolean includeBuiltOn) {
+        Hudson instance = Hudson.getInstance();
+        String jobUrl = instance != null ? instance.getRootUrl() + build.getUrl() : "";
 
         JSONObject jsonData = new JSONObject();
         JSONObject jsonBuild = new JSONObject();
 
-        jsonBuild.element("jobName",build.getProject().getDisplayName());
-        jsonBuild.element("name",build.getDisplayName());
-        jsonBuild.element("number",build.getNumber());
+        jsonBuild.element("jobName", build.getProject().getDisplayName());
+        jsonBuild.element("name", build.getDisplayName());
+        jsonBuild.element("number", build.getNumber());
         jsonBuild.element("date", build.getTimeInMillis());
-        jsonBuild.element("url", jobUrl+build.getNumber());
+        jsonBuild.element("url", jobUrl);
 
         //only for old icescrum server
-        if(includeBuiltOn){
-            jsonBuild.element("builtOn", "Jenkins: "+build.getHudsonVersion());
+        if (includeBuiltOn) {
+            jsonBuild.element("builtOn", "Jenkins: " + build.getHudsonVersion());
         }
 
         Result result = build.getResult();
-        if(result != null){
+        if (result != null) {
             if (result.isBetterOrEqualTo(Result.SUCCESS)) {
-                jsonBuild.element("status",IceScrumSession.BUILD_SUCCESS);
+                jsonBuild.element("status", IceScrumSession.BUILD_SUCCESS);
             } else if (result.isBetterOrEqualTo(Result.UNSTABLE)) {
                 jsonBuild.element("status", IceScrumSession.BUILD_FAILURE);
             } else {
-                jsonBuild.element("status",IceScrumSession.BUILD_ERROR);
+                jsonBuild.element("status", IceScrumSession.BUILD_ERROR);
             }
         } else {
-            jsonBuild.element("status",IceScrumSession.BUILD_ERROR);
+            jsonBuild.element("status", IceScrumSession.BUILD_ERROR);
         }
 
         ArrayList<Integer> ids = new ArrayList<Integer>();
-        if (!build.getChangeSet().isEmptySet()){
+        if (!build.getChangeSet().isEmptySet()) {
             for (ChangeLogSet.Entry change : build.getChangeSet()) {
                 Matcher m = Pattern.compile(pattern).matcher(change.getMsg());
                 while (m.find()) {
@@ -111,11 +111,11 @@ public class IceScrumBuildNotifier extends Notifier {
             jsonBuild.element("tasks", ids);
         }
 
-        if (ids.size() == 0){
+        if (ids.size() == 0) {
             listener.getLogger().println(Messages.IceScrumBuildNotifier_icescrum_build_empty());
         }
 
-        jsonData.element("build",jsonBuild);
+        jsonData.element("build", jsonBuild);
         return jsonData;
     }
 
