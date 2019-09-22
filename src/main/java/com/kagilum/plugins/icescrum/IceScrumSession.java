@@ -162,7 +162,7 @@ public class IceScrumSession {
             method.setRequestHeader("content-type", "application/json");
             method.setRequestHeader("x-icescrum-token", settings.getAccessToken());
         } else {
-            client.getState().setCredentials(new AuthScope(url.getHost(), port),new UsernamePasswordCredentials(settings.getUsername(), settings.getPassword()));
+            client.getState().setCredentials(new AuthScope(url.getHost(), port),new UsernamePasswordCredentials(settings.getUsername(), settings.getPassword().getPlainText()));
         }
     }
 

@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 <f:section title="iceScrum settings">
     <f:entry title="${%icescrum.url}" field="url">
-        <f:textbox name="icescrum.url" default="https://cloud.icescrum.com/p/PKEY" value="${instance.settings.projectUrl}" />
+        <f:textbox name="icescrum.url" checkMethod="post" default="https://cloud.icescrum.com/p/PKEY" value="${instance.settings.projectUrl}" />
     </f:entry>
     <f:radioBlock name="icescrum.authType" value="token" title="iceScrum server authentication (v7+)" checked="${instance.settings.authType == 'token'}" inline="true">
             <f:entry title="${%icescrum.accessToken}" field="accessToken">
@@ -21,7 +21,7 @@
             </f:entry>
             <f:validateButton
                 title="${%Test credentials}" progress="${%Testing...}"
-                method="o ldLoginCheck" with="icescrum.username,icescrum.password,icescrum.url" />
+                method="oldLoginCheck" with="icescrum.username,icescrum.password,icescrum.url" />
     </f:radioBlock>
 </f:section>
 </j:jelly>

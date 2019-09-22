@@ -19,6 +19,8 @@
  */
 package com.kagilum.plugins.icescrum;
 
+import hudson.util.Secret;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +33,7 @@ public class IceScrumProjectSettings {
     private String pkey;
     private String authType = AUTH_TYPE_TOKEN;
     private String username = null;
-    private String password = null;
+    private Secret password = null;
     private String accessToken = null;
     private static final String PATTERN_ICESCRUM_URL = "(http|https)://(.*)/p/([0-9A-Z]*)";
 
@@ -50,7 +52,7 @@ public class IceScrumProjectSettings {
         this.accessToken = accessToken;
     }
 
-    public IceScrumProjectSettings(String url, String username, String password){
+    public IceScrumProjectSettings(String url, String username, Secret password){
         this(url);
         this.authType = "basic";
         this.username = username;
@@ -77,7 +79,7 @@ public class IceScrumProjectSettings {
         return accessToken;
     }
 
-    public String getPassword() {
+    public Secret getPassword() {
         return password;
     }
 
