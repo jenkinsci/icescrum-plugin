@@ -23,6 +23,7 @@ import hudson.Extension;
 import hudson.model.*;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -81,6 +82,7 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
 
         @RequirePOST
         public FormValidation doCheckUrl(@QueryParameter String value) {
+            Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
             if(IceScrumProjectSettings.isValidUrl(value))
                 return FormValidation.ok();
             else
@@ -90,7 +92,7 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
         @RequirePOST
         public FormValidation doLoginCheck(@QueryParameter("icescrum.accessToken") final String accessToken,
                                            @QueryParameter("icescrum.url") final String url) throws IOException, ServletException {
-
+            Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
             if(!IceScrumProjectSettings.isValidUrl(url))
                 return FormValidation.error(Messages.IceScrumProjectProperty_icescrum_error_url());
 
@@ -110,7 +112,7 @@ public final class IceScrumProjectProperty extends JobProperty<AbstractProject<?
         public FormValidation doOldLoginCheck(@QueryParameter("icescrum.username") final String username,
                                               @QueryParameter("icescrum.password") final Secret password,
                                               @QueryParameter("icescrum.url") final String url) throws IOException, ServletException {
-
+            Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
             if(!IceScrumProjectSettings.isValidUrl(url))
                 return FormValidation.error(Messages.IceScrumProjectProperty_icescrum_error_url());
 
